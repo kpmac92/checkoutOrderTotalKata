@@ -27,7 +27,6 @@ public class OrderTest {
         when(mockItemCatalog.getPrice("baked beans")).thenReturn(1.50);
         when(mockItemCatalog.getPrice("coffee beans")).thenReturn(6.99);
 
-        Order subject = new Order(mockItemCatalog);
         assertThat(subject.getTotal()).isEqualTo(0);
 
         subject.scanItem("baked beans");
@@ -39,6 +38,7 @@ public class OrderTest {
 
     @Test
     public void scanningAWeighedItemIncreasesTotal() {
+
     }
     
 }
