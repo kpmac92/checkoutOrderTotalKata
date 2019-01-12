@@ -9,9 +9,17 @@ public class OrderTest {
     @Test
     public void scanningAnItemIncreasesTotal() {
         ItemCatalog itemCatalog = new ItemCatalog();
-        Order subject = new Order(itemCatalog);
+        itemCatalog.setPrice("baked beans", 1.50);
+        itemCatalog.setPrice("coffee beans", 6.99);
 
-        assertThat("everything works!").isEqualTo("everything works!");
+        Order subject = new Order(itemCatalog);
+        assertThat(subject.getTotal()).isEqualTo(0);
+
+        subject.scanItem("baked beans");
+        assertThat(subject.getTotal()).isEqualTo(1.50);
+
+        subject.scanItem("coffee beans");
+        assertThat(subject.getTotal()).isEqualTo(8.49);
     }
     
 }
