@@ -12,6 +12,12 @@ public class ItemCatalog {
     }
 
     public double getPrice(String itemName) {
+        Double price = itemPriceMap.get(itemName);
+
+        if(price == null) {
+            throw new RuntimeException("Item not found: " + itemName);
+        }
+
         return itemPriceMap.get(itemName);
     }
 }
