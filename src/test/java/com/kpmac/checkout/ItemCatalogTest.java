@@ -17,7 +17,7 @@ public class ItemCatalogTest {
 
     @Test
     public void setPriceSetsThePriceForAnItemAndAddsItemToMapIfItDoesNotExist() {
-        subject.setPrice("baked beans", 1.50);
+        subject.setPrice("baked beans", 1.50, false);
 
         assertThat(subject.getPrice("baked beans")).isEqualTo(1.50);
     }
@@ -26,11 +26,30 @@ public class ItemCatalogTest {
     public void getPriceThrowsRuntimeExceptionIfNoPriceIsSet() {
         try {
             subject.getPrice("baked beans");
-        } catch (Exception e) {
-            assertThat(e).isInstanceOf(RuntimeException.class);
+        } catch (RuntimeException e) {
             assertThat(e.getMessage()).isEqualTo("Item not found: baked beans");
             return;
         }
-        fail("Expected getPrice to throw exception.");
+        fail("Expected getPrice to throw runtime exception.");
+    }
+
+    @Test
+    public void getPriceWithoutWeightThrowsExceptionIfItemIsPricedByWeight() {
+        subject.setPrice("almonds", 6.99, true);
+
+        try {
+            subject.getPrice("almonds");
+        } catch (RuntimeException e) {
+            assertThat(e.getMessage()).isEqualTo("almonds must be weighed to get price.");
+            return;
+        }
+        fail("Expected getPrice to throw runtime exception.");
+    }
+
+    @Test
+    public void getPriceWithWeightReturnsPerUnitPriceMultipliedByWeightRoundedToNearestCent(){
+        subject.setPrice("almonds", 6.99, true);
+
+        //assertThat(subject.getPrice("almonds", 1.17)).isEqualTo(8.18);
     }
 }

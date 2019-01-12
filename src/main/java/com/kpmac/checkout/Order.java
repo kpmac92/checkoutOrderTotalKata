@@ -14,6 +14,10 @@ public class Order {
         this.total += itemCatalog.getPrice(itemName);
     }
 
+    public void scanItem(String itemName, double itemWeight) {
+
+    }
+
     public double getTotal() {
         return total;
     }

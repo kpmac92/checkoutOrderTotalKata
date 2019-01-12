@@ -38,7 +38,14 @@ public class OrderTest {
 
     @Test
     public void scanningAWeighedItemIncreasesTotal() {
+        //when(mockItemCatalog.getPrice("almonds", 1.17)).thenReturn(7.23);
+        //when(mockItemCatalog.getPrice("romaine", 2.21)).thenReturn(2.75);
 
+        subject.scanItem("almonds", 1.17);
+        assertThat(subject.getTotal()).isEqualTo(7.23);
+
+        subject.scanItem("romaine", 2.21);
+        assertThat(subject.getTotal()).isEqualTo(9.98);
     }
     
 }

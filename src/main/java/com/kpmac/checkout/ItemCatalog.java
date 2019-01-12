@@ -5,19 +5,22 @@ import java.util.Map;
 
 public class ItemCatalog {
 
-    private Map<String, Double> itemPriceMap = new HashMap<>();
+    private Map<String, Item> itemMap = new HashMap<>();
 
-    public void setPrice(String itemName, double amount) {
-        itemPriceMap.put(itemName, amount);
+    public void setPrice(String itemName, double amount, boolean pricedByWeight) {
+        itemMap.put(itemName, new Item(itemName, amount, pricedByWeight));
     }
 
     public double getPrice(String itemName) {
-        Double price = itemPriceMap.get(itemName);
+        Item item = itemMap.get(itemName);
 
-        if(price == null) {
+        if(item == null) {
             throw new RuntimeException("Item not found: " + itemName);
+        } else if(item.isPricedByWeight()) {
+            throw new RuntimeException(itemName + " must be weighed to get price.");
         }
 
-        return itemPriceMap.get(itemName);
+        return item.getPrice();
     }
+
 }
