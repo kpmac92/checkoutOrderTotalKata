@@ -1,6 +1,10 @@
 package com.kpmac.checkout;
 
+import com.sun.org.apache.bcel.internal.generic.BIPUSH;
+
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Order {
 
@@ -8,19 +12,41 @@ public class Order {
 
     private BigDecimal total = BigDecimal.valueOf(0.0);
 
+    private Map<String, Integer> itemCountMap = new HashMap<>();
+
+    private Map<String, BigDecimal> itemWeightMap = new HashMap<>();
+
     public Order(ItemCatalog itemCatalog) {
         this.itemCatalog = itemCatalog;
     }
 
     public void scanItem(String itemName) {
-        this.total = this.total.add(itemCatalog.getPrice(itemName));
+        Integer itemCount = itemCountMap.putIfAbsent(itemName, 1);
+
+        if(itemCount != null) {
+            itemCountMap.put(itemName, itemCount + 1);
+        }
     }
 
     public void scanItem(String itemName, BigDecimal itemWeight) {
-        this.total = this.total.add(itemCatalog.getPrice(itemName, itemWeight));
+        BigDecimal itemCount = itemWeightMap.putIfAbsent(itemName, itemWeight);
+
+        if(itemCount != null) {
+            itemWeightMap.put(itemName, itemCount.add(itemWeight));
+        }
     }
 
     public BigDecimal getTotal() {
+        BigDecimal total = BigDecimal.valueOf(0);
+
+        for(Map.Entry<String, Integer> entry : itemCountMap.entrySet()) {
+            total = total.add(itemCatalog.getPrice(entry.getKey(), entry.getValue()));
+        }
+
+        for(Map.Entry<String, BigDecimal> entry : itemWeightMap.entrySet()) {
+            total = total.add(itemCatalog.getPrice(entry.getKey(), entry.getValue()));
+        }
+
         return total;
     }
 }

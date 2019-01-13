@@ -26,8 +26,8 @@ public class OrderTest {
 
     @Test
     public void scanningAnItemIncreasesTotal() {
-        when(mockItemCatalog.getPrice("baked beans")).thenReturn(BigDecimal.valueOf(1.50));
-        when(mockItemCatalog.getPrice("coffee beans")).thenReturn(BigDecimal.valueOf(6.99));
+        when(mockItemCatalog.getPrice("baked beans", 1)).thenReturn(BigDecimal.valueOf(1.50));
+        when(mockItemCatalog.getPrice("coffee beans", 1)).thenReturn(BigDecimal.valueOf(6.99));
 
         assertThat(subject.getTotal()).isEqualTo(BigDecimal.valueOf(0));
 
@@ -49,5 +49,4 @@ public class OrderTest {
         subject.scanItem("romaine", BigDecimal.valueOf(2.21));
         assertThat(subject.getTotal()).isEqualTo(BigDecimal.valueOf(9.98));
     }
-    
 }

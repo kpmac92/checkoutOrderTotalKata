@@ -25,7 +25,7 @@ public class ItemCatalog {
         itemMap.put(itemName, new Item(itemName, amount, pricedByWeight));
     }
 
-    public BigDecimal getPrice(String itemName) {
+    public BigDecimal getPrice(String itemName, Integer itemCount) {
         Item item = getItemFromMap(itemName);
 
         if(item.isPricedByWeight()) {

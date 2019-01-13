@@ -21,13 +21,13 @@ public class ItemCatalogTest {
     public void setPriceSetsThePriceForAnItemAndAddsItemToMapIfItDoesNotExist() {
         subject.setPrice("baked beans", BigDecimal.valueOf(1.50), false);
 
-        assertThat(subject.getPrice("baked beans")).isEqualTo(BigDecimal.valueOf(1.50));
+        assertThat(subject.getPrice("baked beans", 1)).isEqualTo(BigDecimal.valueOf(1.50));
     }
 
     @Test
     public void getPriceThrowsRuntimeExceptionIfNoPriceIsSet() {
         try {
-            subject.getPrice("baked beans");
+            subject.getPrice("baked beans", 1);
         } catch (RuntimeException e) {
             assertThat(e.getMessage()).isEqualTo("Item not found: baked beans");
             return;
@@ -40,7 +40,7 @@ public class ItemCatalogTest {
         subject.setPrice("almonds", BigDecimal.valueOf(6.99), true);
 
         try {
-            subject.getPrice("almonds");
+            subject.getPrice("almonds", 1);
         } catch (RuntimeException e) {
             assertThat(e.getMessage()).isEqualTo("almonds must be weighed to get price.");
             return;
@@ -64,7 +64,7 @@ public class ItemCatalogTest {
         subject.setPrice("baked beans", BigDecimal.valueOf(1.50), false);
         subject.setMarkdown("baked beans", BigDecimal.valueOf(.50));
 
-        assertThat(subject.getPrice("baked beans")).isEqualTo(BigDecimal.valueOf(1.00));
+        assertThat(subject.getPrice("baked beans", 1)).isEqualTo(BigDecimal.valueOf(1.00));
 
         subject.setPrice("almonds", BigDecimal.valueOf(6.99), true);
         subject.setMarkdown("almonds", BigDecimal.valueOf(.99));
