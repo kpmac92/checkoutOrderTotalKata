@@ -58,4 +58,18 @@ public class ItemCatalogTest {
         assertThat(subject.getPrice("almonds", BigDecimal.valueOf(4.18329)))
                 .isEqualTo(BigDecimal.valueOf(29.24));
     }
+
+    @Test
+    public void getPriceSubtractsMarkdownPriceWhenMarkdownIsSet() {
+        subject.setPrice("baked beans", BigDecimal.valueOf(1.50), false);
+        subject.setMarkdown("baked beans", BigDecimal.valueOf(.50));
+
+        assertThat(subject.getPrice("baked beans")).isEqualTo(BigDecimal.valueOf(1.00));
+
+        subject.setPrice("almonds", BigDecimal.valueOf(6.99), true);
+        subject.setMarkdown("almonds", BigDecimal.valueOf(.99));
+
+        assertThat(subject.getPrice("almonds", BigDecimal.valueOf(1.17)))
+                .isEqualTo(BigDecimal.valueOf(7.02));
+    }
 }

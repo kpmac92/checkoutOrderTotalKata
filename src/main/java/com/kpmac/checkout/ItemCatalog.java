@@ -17,28 +17,40 @@ public class ItemCatalog {
     }
 
     public BigDecimal getPrice(String itemName) {
-        Item item = itemMap.get(itemName);
+        Item item = getItemFromMap(itemName);
 
-        if(item == null) {
-            throw new RuntimeException("Item not found: " + itemName);
-        } else if(item.isPricedByWeight()) {
+        if(item.isPricedByWeight()) {
             throw new RuntimeException(itemName + " must be weighed to get price.");
         }
 
-        return item.getPrice();
+        return item.getPrice().subtract(item.getMarkDown());
     }
 
     public BigDecimal getPrice(String itemName, BigDecimal weight) {
+        Item item = getItemFromMap(itemName);
+
+        if(!item.isPricedByWeight()) {
+            throw new RuntimeException(itemName + " is not priced by weight.");
+        }
+
+        BigDecimal price = item.getPrice().subtract(item.getMarkDown());
+        return price.multiply(weight, mathContext).setScale(2, roundingMode);
+    }
+
+    public void setMarkdown(String itemName, BigDecimal markdownValue) {
+        Item item = getItemFromMap(itemName);
+
+        item.setMarkDown(markdownValue);
+    }
+
+    private Item getItemFromMap(String itemName) {
         Item item = itemMap.get(itemName);
 
         if(item == null) {
             throw new RuntimeException("Item not found: " + itemName);
-        } else if(!item.isPricedByWeight()) {
-            throw new RuntimeException(itemName + " is not priced by weight.");
         }
 
-
-        return item.getPrice().multiply(weight, mathContext).setScale(2, roundingMode);
+        return item;
     }
 
 }
