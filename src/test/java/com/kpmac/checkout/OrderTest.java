@@ -6,6 +6,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.math.BigDecimal;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
@@ -24,16 +26,16 @@ public class OrderTest {
 
     @Test
     public void scanningAnItemIncreasesTotal() {
-        when(mockItemCatalog.getPrice("baked beans")).thenReturn(1.50);
-        when(mockItemCatalog.getPrice("coffee beans")).thenReturn(6.99);
+        when(mockItemCatalog.getPrice("baked beans")).thenReturn(BigDecimal.valueOf(1.50));
+        when(mockItemCatalog.getPrice("coffee beans")).thenReturn(BigDecimal.valueOf(6.99));
 
-        assertThat(subject.getTotal()).isEqualTo(0);
+        assertThat(subject.getTotal()).isEqualTo(BigDecimal.valueOf(0));
 
         subject.scanItem("baked beans");
-        assertThat(subject.getTotal()).isEqualTo(1.50);
+        assertThat(subject.getTotal()).isEqualTo(BigDecimal.valueOf(1.50));
 
         subject.scanItem("coffee beans");
-        assertThat(subject.getTotal()).isEqualTo(8.49);
+        assertThat(subject.getTotal()).isEqualTo(BigDecimal.valueOf(8.49));
     }
 
     @Test
@@ -42,10 +44,10 @@ public class OrderTest {
         //when(mockItemCatalog.getPrice("romaine", 2.21)).thenReturn(2.75);
 
         subject.scanItem("almonds", 1.17);
-        assertThat(subject.getTotal()).isEqualTo(7.23);
+        assertThat(subject.getTotal()).isEqualTo(BigDecimal.valueOf(7.23));
 
         subject.scanItem("romaine", 2.21);
-        assertThat(subject.getTotal()).isEqualTo(9.98);
+        assertThat(subject.getTotal()).isEqualTo(BigDecimal.valueOf(9.98));
     }
     
 }

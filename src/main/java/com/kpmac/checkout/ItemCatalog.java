@@ -1,17 +1,22 @@
 package com.kpmac.checkout;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Map;
 
 public class ItemCatalog {
 
     private Map<String, Item> itemMap = new HashMap<>();
+    private final RoundingMode roundingMode = RoundingMode.HALF_UP;
+    private final MathContext mathContext = new MathContext(6, roundingMode);
 
-    public void setPrice(String itemName, double amount, boolean pricedByWeight) {
+    public void setPrice(String itemName, BigDecimal amount, boolean pricedByWeight) {
         itemMap.put(itemName, new Item(itemName, amount, pricedByWeight));
     }
 
-    public double getPrice(String itemName) {
+    public BigDecimal getPrice(String itemName) {
         Item item = itemMap.get(itemName);
 
         if(item == null) {
@@ -21,6 +26,19 @@ public class ItemCatalog {
         }
 
         return item.getPrice();
+    }
+
+    public BigDecimal getPrice(String itemName, BigDecimal weight) {
+        Item item = itemMap.get(itemName);
+
+        if(item == null) {
+            throw new RuntimeException("Item not found: " + itemName);
+        } else if(!item.isPricedByWeight()) {
+            throw new RuntimeException(itemName + " is not priced by weight.");
+        }
+
+
+        return item.getPrice().multiply(weight, mathContext).setScale(2, roundingMode);
     }
 
 }

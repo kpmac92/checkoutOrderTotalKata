@@ -1,24 +1,26 @@
 package com.kpmac.checkout;
 
+import java.math.BigDecimal;
+
 public class Order {
 
     private final ItemCatalog itemCatalog;
 
-    private double total = 0.0;
+    private BigDecimal total = BigDecimal.valueOf(0.0);
 
     public Order(ItemCatalog itemCatalog) {
         this.itemCatalog = itemCatalog;
     }
 
     public void scanItem(String itemName) {
-        this.total += itemCatalog.getPrice(itemName);
+        this.total = this.total.add(itemCatalog.getPrice(itemName));
     }
 
     public void scanItem(String itemName, double itemWeight) {
 
     }
 
-    public double getTotal() {
+    public BigDecimal getTotal() {
         return total;
     }
 }

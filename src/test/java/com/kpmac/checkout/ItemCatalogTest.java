@@ -3,6 +3,8 @@ package com.kpmac.checkout;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.math.BigDecimal;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
@@ -17,9 +19,9 @@ public class ItemCatalogTest {
 
     @Test
     public void setPriceSetsThePriceForAnItemAndAddsItemToMapIfItDoesNotExist() {
-        subject.setPrice("baked beans", 1.50, false);
+        subject.setPrice("baked beans", BigDecimal.valueOf(1.50), false);
 
-        assertThat(subject.getPrice("baked beans")).isEqualTo(1.50);
+        assertThat(subject.getPrice("baked beans")).isEqualTo(BigDecimal.valueOf(1.50));
     }
 
     @Test
@@ -35,7 +37,7 @@ public class ItemCatalogTest {
 
     @Test
     public void getPriceWithoutWeightThrowsExceptionIfItemIsPricedByWeight() {
-        subject.setPrice("almonds", 6.99, true);
+        subject.setPrice("almonds", BigDecimal.valueOf(6.99), true);
 
         try {
             subject.getPrice("almonds");
@@ -48,8 +50,12 @@ public class ItemCatalogTest {
 
     @Test
     public void getPriceWithWeightReturnsPerUnitPriceMultipliedByWeightRoundedToNearestCent(){
-        subject.setPrice("almonds", 6.99, true);
+        subject.setPrice("almonds", BigDecimal.valueOf(6.99), true);
 
-        //assertThat(subject.getPrice("almonds", 1.17)).isEqualTo(8.18);
+        assertThat(subject.getPrice("almonds", BigDecimal.valueOf(1.18329)))
+                .isEqualTo(BigDecimal.valueOf(8.27));
+
+        assertThat(subject.getPrice("almonds", BigDecimal.valueOf(4.18329)))
+                .isEqualTo(BigDecimal.valueOf(29.24));
     }
 }
