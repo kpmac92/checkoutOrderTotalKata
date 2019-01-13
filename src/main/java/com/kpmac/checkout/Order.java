@@ -16,8 +16,8 @@ public class Order {
         this.total = this.total.add(itemCatalog.getPrice(itemName));
     }
 
-    public void scanItem(String itemName, double itemWeight) {
-
+    public void scanItem(String itemName, BigDecimal itemWeight) {
+        this.total = this.total.add(itemCatalog.getPrice(itemName, itemWeight));
     }
 
     public BigDecimal getTotal() {

@@ -40,13 +40,13 @@ public class OrderTest {
 
     @Test
     public void scanningAWeighedItemIncreasesTotal() {
-        //when(mockItemCatalog.getPrice("almonds", 1.17)).thenReturn(7.23);
-        //when(mockItemCatalog.getPrice("romaine", 2.21)).thenReturn(2.75);
+        when(mockItemCatalog.getPrice("almonds", BigDecimal.valueOf(1.17))).thenReturn(BigDecimal.valueOf(7.23));
+        when(mockItemCatalog.getPrice("romaine", BigDecimal.valueOf(2.21))).thenReturn(BigDecimal.valueOf(2.75));
 
-        subject.scanItem("almonds", 1.17);
+        subject.scanItem("almonds", BigDecimal.valueOf(1.17));
         assertThat(subject.getTotal()).isEqualTo(BigDecimal.valueOf(7.23));
 
-        subject.scanItem("romaine", 2.21);
+        subject.scanItem("romaine", BigDecimal.valueOf(2.21));
         assertThat(subject.getTotal()).isEqualTo(BigDecimal.valueOf(9.98));
     }
     
