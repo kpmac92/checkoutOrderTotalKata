@@ -30,4 +30,8 @@ public class Item {
     public void setMarkDown(BigDecimal markDown) {
         this.markDown = markDown;
     }
+
+    public String getName() {
+        return name;
+    }
 }
