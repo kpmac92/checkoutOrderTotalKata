@@ -20,8 +20,10 @@ public class OrderIntegrationTest {
         Order subject = new Order(itemCatalog);
         subject.scanItem("americone dream");
         subject.scanItem("baked beans");
+        subject.scanItem("baked beans");
         subject.scanItem("almonds", BigDecimal.valueOf(1.17));
+        subject.scanItem("almonds", BigDecimal.valueOf(1.29));
 
-        assertThat(subject.getTotal()).isEqualTo(BigDecimal.valueOf(14.01));
+        assertThat(subject.getTotal()).isEqualTo(BigDecimal.valueOf(22.75));
     }
 }

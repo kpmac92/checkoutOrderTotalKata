@@ -22,6 +22,7 @@ public class ItemCatalogTest {
         subject.setPrice("baked beans", BigDecimal.valueOf(1.50), false);
 
         assertThat(subject.getPrice("baked beans", 1)).isEqualTo(BigDecimal.valueOf(1.50));
+        assertThat(subject.getPrice("baked beans", 2)).isEqualTo(BigDecimal.valueOf(3.00));
     }
 
     @Test

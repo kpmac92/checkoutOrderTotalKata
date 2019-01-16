@@ -32,7 +32,7 @@ public class ItemCatalog {
             throw new RuntimeException(itemName + " must be weighed to get price.");
         }
 
-        return getItemPriceWithMarkDown(item);
+        return getItemPriceWithMarkDown(item).multiply(BigDecimal.valueOf(itemCount));
     }
 
     public BigDecimal getPrice(String itemName, BigDecimal weight) {

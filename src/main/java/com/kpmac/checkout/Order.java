@@ -29,10 +29,10 @@ public class Order {
     }
 
     public void scanItem(String itemName, BigDecimal itemWeight) {
-        BigDecimal itemCount = itemWeightMap.putIfAbsent(itemName, itemWeight);
+        BigDecimal totalItemWeight = itemWeightMap.putIfAbsent(itemName, itemWeight);
 
-        if(itemCount != null) {
-            itemWeightMap.put(itemName, itemCount.add(itemWeight));
+        if(totalItemWeight != null) {
+            itemWeightMap.put(itemName, totalItemWeight.add(itemWeight));
         }
     }
 
