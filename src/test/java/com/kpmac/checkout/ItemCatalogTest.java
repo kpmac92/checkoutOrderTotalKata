@@ -50,6 +50,19 @@ public class ItemCatalogTest {
     }
 
     @Test
+    public void getPriceWithWeightThrowsExceptionIfItemIsNotPricedByWeight() {
+        subject.setPrice("baked beans", BigDecimal.valueOf(1.50), false);
+
+        try {
+            subject.getPrice("baked beans", BigDecimal.valueOf(2.63));
+        } catch (RuntimeException e) {
+            assertThat(e.getMessage()).isEqualTo("baked beans is not priced by weight.");
+            return;
+        }
+        fail("Expected getPrice to throw runtime exception.");
+    }
+
+    @Test
     public void getPriceWithWeightReturnsPerUnitPriceMultipliedByWeightRoundedToNearestCent(){
         subject.setPrice("almonds", BigDecimal.valueOf(6.99), true);
 
