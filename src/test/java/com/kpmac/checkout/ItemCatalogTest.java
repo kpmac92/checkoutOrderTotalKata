@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
@@ -11,6 +12,8 @@ import static org.assertj.core.api.Assertions.fail;
 public class ItemCatalogTest {
 
     private ItemCatalog subject;
+
+    private RoundingMode roundingMode = RoundingMode.HALF_UP;
 
     @Before
     public void setup() {
@@ -21,8 +24,10 @@ public class ItemCatalogTest {
     public void setPriceSetsThePriceForAnItemAndAddsItemToMapIfItDoesNotExist() {
         subject.setPrice("baked beans", BigDecimal.valueOf(1.50), false);
 
-        assertThat(subject.getPrice("baked beans", 1)).isEqualTo(BigDecimal.valueOf(1.50));
-        assertThat(subject.getPrice("baked beans", 2)).isEqualTo(BigDecimal.valueOf(3.00));
+        assertThat(subject.getPrice("baked beans", 1))
+                .isEqualTo(BigDecimal.valueOf(1.50).setScale(2, roundingMode));
+        assertThat(subject.getPrice("baked beans", 2))
+                .isEqualTo(BigDecimal.valueOf(3.00).setScale(2, roundingMode));
     }
 
     @Test
@@ -78,12 +83,21 @@ public class ItemCatalogTest {
         subject.setPrice("baked beans", BigDecimal.valueOf(1.50), false);
         subject.setMarkdown("baked beans", BigDecimal.valueOf(.50));
 
-        assertThat(subject.getPrice("baked beans", 1)).isEqualTo(BigDecimal.valueOf(1.00));
+        assertThat(subject.getPrice("baked beans", 1))
+                .isEqualTo(BigDecimal.valueOf(1.00).setScale(2, roundingMode));
 
         subject.setPrice("almonds", BigDecimal.valueOf(6.99), true);
         subject.setMarkdown("almonds", BigDecimal.valueOf(.99));
 
         assertThat(subject.getPrice("almonds", BigDecimal.valueOf(1.17)))
                 .isEqualTo(BigDecimal.valueOf(7.02));
+    }
+
+    @Test
+    public void getPriceReturnsCorrectPriceWhenABogoSpecialIsAdded() {
+        subject.setPrice("baked beans", BigDecimal.valueOf(1.50), false);
+        subject.addBogoSpecial("baked beans", 1, 1, BigDecimal.valueOf(1));
+
+        assertThat(subject.getPrice("baked beans", 4)).isEqualTo(BigDecimal.valueOf(3.00));
     }
 }

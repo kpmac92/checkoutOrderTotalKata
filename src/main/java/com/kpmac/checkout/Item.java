@@ -8,6 +8,7 @@ public class Item {
     private final String name;
     private final BigDecimal price;
     private BigDecimal markDown;
+    private PriceSpecial priceSpecial;
 
     public Item(String name, BigDecimal price, Boolean pricedByWeight) {
         this.name = name;
@@ -33,5 +34,13 @@ public class Item {
 
     public String getName() {
         return name;
+    }
+
+    public PriceSpecial getPriceSpecial() {
+        return priceSpecial;
+    }
+
+    public void setPriceSpecial(PriceSpecial priceSpecial) {
+        this.priceSpecial = priceSpecial;
     }
 }
