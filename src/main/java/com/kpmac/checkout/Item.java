@@ -1,5 +1,7 @@
 package com.kpmac.checkout;
 
+import com.kpmac.checkout.special.PriceSpecial;
+
 import java.math.BigDecimal;
 
 public class Item {

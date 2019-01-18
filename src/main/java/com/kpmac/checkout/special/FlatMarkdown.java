@@ -1,4 +1,4 @@
-package com.kpmac.checkout;
+package com.kpmac.checkout.special;
 
 import java.math.BigDecimal;
 

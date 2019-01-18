@@ -96,8 +96,9 @@ public class ItemCatalogTest {
     @Test
     public void getPriceReturnsCorrectPriceWhenABogoSpecialIsAdded() {
         subject.setPrice("baked beans", BigDecimal.valueOf(1.50), false);
-        subject.addBogoSpecial("baked beans", 1, 1, BigDecimal.valueOf(1));
+        subject.addBogoSpecial("baked beans", 1, BigDecimal.valueOf(0));
 
-        assertThat(subject.getPrice("baked beans", 4)).isEqualTo(BigDecimal.valueOf(3.00));
+        assertThat(subject.getPrice("baked beans", 4))
+                .isEqualTo(BigDecimal.valueOf(3.00).setScale(2, roundingMode));
     }
 }
