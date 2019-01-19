@@ -12,9 +12,7 @@ import static org.assertj.core.api.Assertions.fail;
 public class ItemCatalogTest {
 
     private ItemCatalog subject;
-
-    private RoundingMode roundingMode = RoundingMode.HALF_UP;
-
+    
     @Before
     public void setup() {
         subject = new ItemCatalog();
@@ -22,12 +20,10 @@ public class ItemCatalogTest {
 
     @Test
     public void setPriceSetsThePriceForAnItemAndAddsItemToMapIfItDoesNotExist() {
-        subject.setPrice("baked beans", BigDecimal.valueOf(1.50), false);
+        subject.setPrice("baked beans", getFormattedValue(1.50), false);
 
-        assertThat(subject.getPrice("baked beans", 1))
-                .isEqualTo(BigDecimal.valueOf(1.50).setScale(2, roundingMode));
-        assertThat(subject.getPrice("baked beans", 2))
-                .isEqualTo(BigDecimal.valueOf(3.00).setScale(2, roundingMode));
+        assertThat(subject.getPrice("baked beans", 1)).isEqualTo(getFormattedValue(1.50));
+        assertThat(subject.getPrice("baked beans", 2)).isEqualTo(getFormattedValue(3.00));
     }
 
     @Test
@@ -43,7 +39,7 @@ public class ItemCatalogTest {
 
     @Test
     public void getPriceWithoutWeightThrowsExceptionIfItemIsPricedByWeight() {
-        subject.setPrice("almonds", BigDecimal.valueOf(6.99), true);
+        subject.setPrice("almonds", getFormattedValue(6.99), true);
 
         try {
             subject.getPrice("almonds", 1);
@@ -56,10 +52,10 @@ public class ItemCatalogTest {
 
     @Test
     public void getPriceWithWeightThrowsExceptionIfItemIsNotPricedByWeight() {
-        subject.setPrice("baked beans", BigDecimal.valueOf(1.50), false);
+        subject.setPrice("baked beans", getFormattedValue(1.50), false);
 
         try {
-            subject.getPrice("baked beans", BigDecimal.valueOf(2.63));
+            subject.getPrice("baked beans", getFormattedValue(2.63));
         } catch (RuntimeException e) {
             assertThat(e.getMessage()).isEqualTo("baked beans is not priced by weight.");
             return;
@@ -69,54 +65,72 @@ public class ItemCatalogTest {
 
     @Test
     public void getPriceWithWeightReturnsPerUnitPriceMultipliedByWeightRoundedToNearestCent(){
-        subject.setPrice("almonds", BigDecimal.valueOf(6.99), true);
+        subject.setPrice("almonds", getFormattedValue(6.99), true);
 
         assertThat(subject.getPrice("almonds", BigDecimal.valueOf(1.18329)))
-                .isEqualTo(BigDecimal.valueOf(8.27));
+                .isEqualTo(getFormattedValue(8.27));
 
         assertThat(subject.getPrice("almonds", BigDecimal.valueOf(4.18329)))
-                .isEqualTo(BigDecimal.valueOf(29.24));
+                .isEqualTo(getFormattedValue(29.24));
     }
 
     @Test
     public void getPriceSubtractsMarkdownPriceWhenMarkdownIsSet() {
-        subject.setPrice("baked beans", BigDecimal.valueOf(1.50), false);
-        subject.setMarkdown("baked beans", BigDecimal.valueOf(.50));
+        subject.setPrice("baked beans", getFormattedValue(1.50), false);
+        subject.setMarkdown("baked beans", getFormattedValue(.50));
 
         assertThat(subject.getPrice("baked beans", 1))
-                .isEqualTo(BigDecimal.valueOf(1.00).setScale(2, roundingMode));
+                .isEqualTo(getFormattedValue(1.00));
 
-        subject.setPrice("almonds", BigDecimal.valueOf(6.99), true);
-        subject.setMarkdown("almonds", BigDecimal.valueOf(.99));
+        subject.setPrice("almonds", getFormattedValue(6.99), true);
+        subject.setMarkdown("almonds", getFormattedValue(.99));
 
-        assertThat(subject.getPrice("almonds", BigDecimal.valueOf(1.17)))
-                .isEqualTo(BigDecimal.valueOf(7.02));
+        assertThat(subject.getPrice("almonds", getFormattedValue(1.17)))
+                .isEqualTo(getFormattedValue(7.02));
     }
 
     @Test
     public void getPriceReturnsCorrectPriceWhenABogoSpecialIsAdded() {
-        subject.setPrice("baked beans", BigDecimal.valueOf(1.50), false);
-        subject.addBogoSpecial("baked beans", 1, BigDecimal.valueOf(0));
+        subject.setPrice("baked beans", getFormattedValue(1.50), false);
+        subject.addBogoSpecial("baked beans", 1, getFormattedValue(0));
 
-        assertThat(subject.getPrice("baked beans", 4))
-                .isEqualTo(BigDecimal.valueOf(3.00).setScale(2, roundingMode));
+        assertThat(subject.getPrice("baked beans", 4)).isEqualTo(getFormattedValue(3.00));
 
-        subject.addBogoSpecial("baked beans", 3, BigDecimal.valueOf(0));
+        subject.addBogoSpecial("baked beans", 3, getFormattedValue(0));
 
-        assertThat(subject.getPrice("baked beans", 4))
-                .isEqualTo(BigDecimal.valueOf(4.50).setScale(2, roundingMode));
+        assertThat(subject.getPrice("baked beans", 4)).isEqualTo(getFormattedValue(4.50));
 
-        assertThat(subject.getPrice("baked beans", 5))
-                .isEqualTo(BigDecimal.valueOf(6).setScale(2, roundingMode));
+        assertThat(subject.getPrice("baked beans", 5)).isEqualTo(getFormattedValue(6));
 
-        subject.addBogoSpecial("baked beans", 3, BigDecimal.valueOf(.50));
+        subject.addBogoSpecial("baked beans", 3, getFormattedValue(.50));
 
-        assertThat(subject.getPrice("baked beans", 8))
-                .isEqualTo(BigDecimal.valueOf(10.5).setScale(2, roundingMode));
+        assertThat(subject.getPrice("baked beans", 8)).isEqualTo(getFormattedValue(10.5));
 
-        subject.setMarkdown("baked beans", BigDecimal.valueOf(.50));
+        subject.setMarkdown("baked beans", getFormattedValue(.50));
 
-        assertThat(subject.getPrice("baked beans", 5))
-                .isEqualTo(BigDecimal.valueOf(4.50).setScale(2, roundingMode));
+        assertThat(subject.getPrice("baked beans", 5)).isEqualTo(getFormattedValue(4.50));
+    }
+
+    @Test
+    public void getPriceReturnsCorrectPriceWhenABulkPriceSpecialIsAdded() {
+        subject.setPrice("baked beans", getFormattedValue(1.50), false);
+
+        subject.addBulkSpecial("baked beans", 5, getFormattedValue(1));
+
+        assertThat(subject.getPrice("baked beans", 5)).isEqualTo(getFormattedValue(5));
+
+        assertThat(subject.getPrice("baked beans", 6)).isEqualTo(getFormattedValue(6.50));
+
+        assertThat(subject.getPrice("baked beans", 10)).isEqualTo(getFormattedValue(10));
+        
+        assertThat(subject.getPrice("baked beans", 17)).isEqualTo(getFormattedValue(18));
+        
+        subject.setMarkdown("baked beans", getFormattedValue(.25));
+
+        assertThat(subject.getPrice("baked beans", 6)).isEqualTo(getFormattedValue(6.25));
+    }
+    
+    private BigDecimal getFormattedValue(double value) {
+        return BigDecimal.valueOf(value).setScale(2, RoundingMode.HALF_UP);
     }
 }

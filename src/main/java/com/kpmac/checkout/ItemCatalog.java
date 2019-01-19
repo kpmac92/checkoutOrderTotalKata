@@ -1,5 +1,6 @@
 package com.kpmac.checkout;
 
+import com.kpmac.checkout.special.BulkPrice;
 import com.kpmac.checkout.special.BuyOneGetOne;
 
 import java.math.BigDecimal;
@@ -55,6 +56,12 @@ public class ItemCatalog {
         Item item = getItemFromMap(itemName);
 
         item.setPriceSpecial(new BuyOneGetOne(item, specialQuantity, priceModifier));
+    }
+
+    public void addBulkSpecial(String itemName, int specialQuantity, BigDecimal specialPrice) {
+        Item item = getItemFromMap(itemName);
+
+        item.setPriceSpecial(new BulkPrice(item, specialQuantity, specialPrice));
     }
 
     private Item getItemFromMap(String itemName) {
