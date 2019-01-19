@@ -1,7 +1,6 @@
 package com.kpmac.checkout;
 
 import com.kpmac.checkout.special.BuyOneGetOne;
-import com.kpmac.checkout.special.FlatMarkdown;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -49,13 +48,13 @@ public class ItemCatalog {
     public void setMarkdown(String itemName, BigDecimal markdownValue) {
         Item item = getItemFromMap(itemName);
 
-        item.setPriceSpecial(new FlatMarkdown(item.getPrice(), markdownValue));
+        item.setMarkDown(markdownValue);
     }
 
     public void addBogoSpecial(String itemName, int specialQuantity, BigDecimal priceModifier) {
         Item item = getItemFromMap(itemName);
 
-        item.setPriceSpecial(new BuyOneGetOne(item.getPrice(), specialQuantity, priceModifier));
+        item.setPriceSpecial(new BuyOneGetOne(item, specialQuantity, priceModifier));
     }
 
     private Item getItemFromMap(String itemName) {

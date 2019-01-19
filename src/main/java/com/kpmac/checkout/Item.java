@@ -23,7 +23,7 @@ public class Item {
     }
 
     public BigDecimal getPrice() {
-        return price;
+        return markDown == null ? price : price.subtract(markDown);
     }
 
     public BigDecimal getMarkDown() {

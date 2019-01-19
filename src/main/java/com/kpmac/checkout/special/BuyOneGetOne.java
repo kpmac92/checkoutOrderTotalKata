@@ -1,18 +1,20 @@
 package com.kpmac.checkout.special;
 
+import com.kpmac.checkout.Item;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 public class BuyOneGetOne implements PriceSpecial{
 
-    private final BigDecimal specialPrice;
+    private final BigDecimal priceModifier;
     private final int specialQuantity;
-    private final BigDecimal basePrice;
+    private final Item item;
 
-    public BuyOneGetOne(BigDecimal basePrice, int specialQuantity, BigDecimal priceModifier) {
-        this.basePrice = basePrice;
+    public BuyOneGetOne(Item item, int specialQuantity, BigDecimal priceModifier) {
+        this.item = item;
         this.specialQuantity = specialQuantity;
-        this.specialPrice = basePrice.multiply(priceModifier).setScale(2, RoundingMode.HALF_UP);
+        this.priceModifier = priceModifier;
     }
 
     @Override
@@ -26,8 +28,8 @@ public class BuyOneGetOne implements PriceSpecial{
         }
         int basePriceCount = quantity - markDownPriceCount;
 
-        return BigDecimal.valueOf(basePriceCount).multiply(basePrice)
-                .add(BigDecimal.valueOf(markDownPriceCount).multiply(specialPrice));
+        return BigDecimal.valueOf(basePriceCount).multiply(item.getPrice())
+                .add(BigDecimal.valueOf(markDownPriceCount).multiply(getSpecialPrice()));
     }
 
     @Override
@@ -35,4 +37,7 @@ public class BuyOneGetOne implements PriceSpecial{
         throw new UnsupportedOperationException("Buy One Get One special not valid for weighed items.");
     }
 
+    private BigDecimal getSpecialPrice() {
+        return item.getPrice().multiply(priceModifier).setScale(2, RoundingMode.HALF_UP);
+    }
 }

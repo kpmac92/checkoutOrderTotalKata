@@ -100,5 +100,23 @@ public class ItemCatalogTest {
 
         assertThat(subject.getPrice("baked beans", 4))
                 .isEqualTo(BigDecimal.valueOf(3.00).setScale(2, roundingMode));
+
+        subject.addBogoSpecial("baked beans", 3, BigDecimal.valueOf(0));
+
+        assertThat(subject.getPrice("baked beans", 4))
+                .isEqualTo(BigDecimal.valueOf(4.50).setScale(2, roundingMode));
+
+        assertThat(subject.getPrice("baked beans", 5))
+                .isEqualTo(BigDecimal.valueOf(6).setScale(2, roundingMode));
+
+        subject.addBogoSpecial("baked beans", 3, BigDecimal.valueOf(.50));
+
+        assertThat(subject.getPrice("baked beans", 8))
+                .isEqualTo(BigDecimal.valueOf(10.5).setScale(2, roundingMode));
+
+        subject.setMarkdown("baked beans", BigDecimal.valueOf(.50));
+
+        assertThat(subject.getPrice("baked beans", 5))
+                .isEqualTo(BigDecimal.valueOf(4.50).setScale(2, roundingMode));
     }
 }
