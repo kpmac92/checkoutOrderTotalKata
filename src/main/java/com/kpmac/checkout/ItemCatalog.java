@@ -53,9 +53,13 @@ public class ItemCatalog {
     }
 
     public void addBogoSpecial(String itemName, int specialQuantity, BigDecimal priceModifier) {
+        addBogoSpecial(itemName, specialQuantity, priceModifier, null);
+    }
+
+    public void addBogoSpecial(String itemName, int specialQuantity, BigDecimal priceModifier, Integer limit) {
         Item item = getItemFromMap(itemName);
 
-        item.setPriceSpecial(new BuyOneGetOne(item, specialQuantity, priceModifier));
+        item.setPriceSpecial(new BuyOneGetOne(item, specialQuantity, priceModifier, limit));
     }
 
     public void addBulkSpecial(String itemName, int specialQuantity, BigDecimal specialPrice) {

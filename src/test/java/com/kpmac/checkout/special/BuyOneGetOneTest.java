@@ -12,7 +12,8 @@ public class BuyOneGetOneTest {
 
     @Test
     public void getPriceThrowsUnsupportedOperationExceptionWhenCalledWithWeight() {
-        BuyOneGetOne subject = new BuyOneGetOne(new Item("item", BigDecimal.valueOf(1), true), 0, BigDecimal.valueOf(1));
+        BuyOneGetOne subject = new BuyOneGetOne(new Item("item", BigDecimal.valueOf(1)
+                , true), 0, BigDecimal.valueOf(1), 1);
 
         try{
             subject.getPrice(BigDecimal.valueOf(1.00));

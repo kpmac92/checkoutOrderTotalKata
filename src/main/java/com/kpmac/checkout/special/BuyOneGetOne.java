@@ -10,11 +10,13 @@ public class BuyOneGetOne implements PriceSpecial{
     private final BigDecimal priceModifier;
     private final int specialQuantity;
     private final Item item;
+    private final Integer limit;
 
-    public BuyOneGetOne(Item item, int specialQuantity, BigDecimal priceModifier) {
+    public BuyOneGetOne(Item item, int specialQuantity, BigDecimal priceModifier, Integer limit) {
         this.item = item;
         this.specialQuantity = specialQuantity;
         this.priceModifier = priceModifier;
+        this.limit = limit;
     }
 
     @Override
@@ -22,9 +24,9 @@ public class BuyOneGetOne implements PriceSpecial{
         int markDownPriceCount;
 
         if(specialQuantity == 1){
-            markDownPriceCount = quantity / 2;
+            markDownPriceCount = limit == null ? quantity / 2 : limit / 2;
         } else {
-            markDownPriceCount = quantity / specialQuantity;
+            markDownPriceCount = limit == null ? quantity / specialQuantity : (limit - 1) / specialQuantity;
         }
         int basePriceCount = quantity - markDownPriceCount;
 
