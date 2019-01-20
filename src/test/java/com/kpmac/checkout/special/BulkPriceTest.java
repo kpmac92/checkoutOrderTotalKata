@@ -12,7 +12,8 @@ public class BulkPriceTest {
 
     @Test
     public void getPriceThrowsUnsupportedOperationExceptionWhenCalledWithWeight() {
-        BulkPrice subject = new BulkPrice(new Item("item", BigDecimal.valueOf(1), true), 0, BigDecimal.valueOf(1));
+        BulkPrice subject = new BulkPrice(new Item("item", BigDecimal.valueOf(1), true)
+                , 0, BigDecimal.valueOf(1), 1);
 
         try{
             subject.getPrice(BigDecimal.valueOf(1.00));

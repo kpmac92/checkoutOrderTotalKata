@@ -63,9 +63,13 @@ public class ItemCatalog {
     }
 
     public void addBulkSpecial(String itemName, int specialQuantity, BigDecimal specialPrice) {
+        addBulkSpecial(itemName, specialQuantity, specialPrice, null);
+    }
+
+    public void addBulkSpecial(String itemName, int specialQuantity, BigDecimal specialPrice, Integer limit) {
         Item item = getItemFromMap(itemName);
 
-        item.setPriceSpecial(new BulkPrice(item, specialQuantity, specialPrice));
+        item.setPriceSpecial(new BulkPrice(item, specialQuantity, specialPrice, limit));
     }
 
     private Item getItemFromMap(String itemName) {

@@ -9,17 +9,27 @@ public class BulkPrice implements PriceSpecial{
     private final Item item;
     private final int specialQuantity;
     private final BigDecimal specialPrice;
+    private final Integer limit;
 
-    public BulkPrice(Item item, int specialQuantity, BigDecimal specialPrice) {
+    public BulkPrice(Item item, int specialQuantity, BigDecimal specialPrice, Integer limit) {
         this.item = item;
         this.specialQuantity = specialQuantity;
         this.specialPrice = specialPrice;
+        this.limit = limit;
     }
 
     @Override
     public BigDecimal getPrice(int quantity) {
-        int itemsAtBasePrice = quantity % specialQuantity ;
-        int itemsAtSpecialPrice = quantity - itemsAtBasePrice;
+        int itemsAtBasePrice;
+        int itemsAtSpecialPrice;
+
+        if(limit == null || quantity < limit) {
+            itemsAtBasePrice = quantity % specialQuantity ;
+            itemsAtSpecialPrice = quantity - itemsAtBasePrice;
+        } else {
+             itemsAtBasePrice = limit % specialQuantity + (quantity - limit);
+             itemsAtSpecialPrice = quantity - itemsAtBasePrice;
+        }
 
         return specialPrice.multiply(BigDecimal.valueOf(itemsAtSpecialPrice)
                 .add(item.getPrice().multiply(BigDecimal.valueOf(itemsAtBasePrice))));

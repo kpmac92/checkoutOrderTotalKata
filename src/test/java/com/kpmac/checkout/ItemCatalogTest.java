@@ -151,6 +151,23 @@ public class ItemCatalogTest {
         assertThat(subject.getPrice("baked beans", 8)).isEqualTo(getFormattedValue(7.5));
     }
 
+    @Test
+    public void getPriceReturnsCorrectPriceWithBulkSpecialAndLimit() {
+        subject.setPrice("baked beans", BigDecimal.valueOf(1.50), false);
+
+        subject.addBulkSpecial("baked beans", 5, getFormattedValue(1), 10);
+
+        assertThat(subject.getPrice("baked beans", 15)).isEqualTo(getFormattedValue(17.5));
+        assertThat(subject.getPrice("baked beans", 8)).isEqualTo(getFormattedValue(9.5));
+        assertThat(subject.getPrice("baked beans", 13)).isEqualTo(getFormattedValue(14.5));
+
+        subject.addBulkSpecial("baked beans", 3, getFormattedValue(1), 8);
+
+        assertThat(subject.getPrice("baked beans", 6)).isEqualTo(getFormattedValue(6));
+        assertThat(subject.getPrice("baked beans", 7)).isEqualTo(getFormattedValue(7.5));
+        assertThat(subject.getPrice("baked beans", 9)).isEqualTo(getFormattedValue(10.5));
+        assertThat(subject.getPrice("baked beans", 10)).isEqualTo(getFormattedValue(12));
+    }
 
     private BigDecimal getFormattedValue(double value) {
         return BigDecimal.valueOf(value).setScale(2, RoundingMode.HALF_UP);
