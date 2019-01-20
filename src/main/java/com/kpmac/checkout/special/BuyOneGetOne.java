@@ -23,15 +23,17 @@ public class BuyOneGetOne implements PriceSpecial{
     public BigDecimal getPrice(int quantity) {
         int markDownPriceCount;
 
-        if(specialQuantity == 1){
-            markDownPriceCount = limit == null ? quantity / 2 : limit / 2;
+        if(limit == null || quantity < limit) {
+            markDownPriceCount = quantity / (specialQuantity + 1);
         } else {
-            markDownPriceCount = limit == null ? quantity / specialQuantity : (limit - 1) / specialQuantity;
+            markDownPriceCount = limit / (specialQuantity + 1);
         }
+
         int basePriceCount = quantity - markDownPriceCount;
 
-        return BigDecimal.valueOf(basePriceCount).multiply(item.getPrice())
-                .add(BigDecimal.valueOf(markDownPriceCount).multiply(getSpecialPrice()));
+        BigDecimal basePriceTotal = BigDecimal.valueOf(basePriceCount).multiply(item.getPrice());
+        BigDecimal specialPriceTotal = BigDecimal.valueOf(markDownPriceCount).multiply(getSpecialPrice());
+        return basePriceTotal.add(specialPriceTotal);
     }
 
     @Override

@@ -31,8 +31,10 @@ public class BulkPrice implements PriceSpecial{
              itemsAtSpecialPrice = quantity - itemsAtBasePrice;
         }
 
-        return specialPrice.multiply(BigDecimal.valueOf(itemsAtSpecialPrice)
-                .add(item.getPrice().multiply(BigDecimal.valueOf(itemsAtBasePrice))));
+        BigDecimal specialPriceTotal = specialPrice.multiply(BigDecimal.valueOf(itemsAtSpecialPrice));
+        BigDecimal basePriceTotal = item.getPrice().multiply(BigDecimal.valueOf(itemsAtBasePrice));
+
+        return specialPriceTotal.add(basePriceTotal);
     }
 
     @Override
