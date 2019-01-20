@@ -9,7 +9,7 @@ import java.math.RoundingMode;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
-public class ItemCatalogTest {
+public class ItemCatalogTest extends CheckoutBaseTest{
 
     private ItemCatalog subject;
     
@@ -167,9 +167,5 @@ public class ItemCatalogTest {
         assertThat(subject.getPrice("baked beans", 7)).isEqualTo(getFormattedValue(7.5));
         assertThat(subject.getPrice("baked beans", 9)).isEqualTo(getFormattedValue(10.5));
         assertThat(subject.getPrice("baked beans", 10)).isEqualTo(getFormattedValue(12));
-    }
-
-    private BigDecimal getFormattedValue(double value) {
-        return BigDecimal.valueOf(value).setScale(2, RoundingMode.HALF_UP);
     }
 }

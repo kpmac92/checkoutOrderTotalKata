@@ -1,6 +1,7 @@
 package com.kpmac.checkout;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,8 +35,30 @@ public class Order {
         }
     }
 
+    public void removeItem(String itemName) {
+        Integer itemCount = itemCountMap.get(itemName);
+
+        if(itemCount != null) {
+            removeCountedItem(itemName, itemCount);
+        } else if(itemWeightMap.containsKey(itemName)){
+            itemWeightMap.remove(itemName);
+        } else {
+            throw new RuntimeException("Item not found in this order.");
+        }
+    }
+
+    private void removeCountedItem(String itemName, Integer itemCount) {
+        itemCount = itemCount - 1;
+
+        if (itemCount == 0) {
+            itemCountMap.remove(itemName);
+        } else {
+            itemCountMap.put(itemName, itemCount);
+        }
+    }
+
     public BigDecimal getTotal() {
-        BigDecimal total = BigDecimal.valueOf(0);
+        BigDecimal total = BigDecimal.valueOf(0).setScale(2, RoundingMode.HALF_UP);
 
         for(Map.Entry<String, Integer> entry : itemCountMap.entrySet()) {
             total = total.add(itemCatalog.getPrice(entry.getKey(), entry.getValue()));
