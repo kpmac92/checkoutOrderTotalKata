@@ -17,6 +17,12 @@ public class OrderTest extends CheckoutBaseTest{
     @Mock
     private ItemCatalog mockItemCatalog;
 
+    @Mock
+    private Item mockItem1;
+
+    @Mock
+    private Item mockItem2;
+
     private Order subject;
 
     @Before
@@ -26,8 +32,10 @@ public class OrderTest extends CheckoutBaseTest{
 
     @Test
     public void scanningAnItemIncreasesTotal() {
-        when(mockItemCatalog.getPrice("baked beans", 1)).thenReturn(getFormattedValue(1.50));
-        when(mockItemCatalog.getPrice("coffee beans", 1)).thenReturn(getFormattedValue(6.99));
+        when(mockItemCatalog.getItem("baked beans")).thenReturn(mockItem1);
+        when(mockItem1.getPrice(1)).thenReturn(getFormattedValue(1.50));
+        when(mockItemCatalog.getItem("coffee beans")).thenReturn(mockItem2);
+        when(mockItem2.getPrice(1)).thenReturn(getFormattedValue(6.99));
 
         assertThat(subject.getTotal()).isEqualTo(getFormattedValue(0));
 
@@ -40,8 +48,10 @@ public class OrderTest extends CheckoutBaseTest{
 
     @Test
     public void scanningAWeighedItemIncreasesTotal() {
-        when(mockItemCatalog.getPrice("almonds", BigDecimal.valueOf(1.17))).thenReturn(getFormattedValue(7.23));
-        when(mockItemCatalog.getPrice("romaine", BigDecimal.valueOf(2.21))).thenReturn(getFormattedValue(2.75));
+        when(mockItemCatalog.getItem("almonds")).thenReturn(mockItem1);
+        when(mockItem1.getPrice(BigDecimal.valueOf(1.17))).thenReturn(getFormattedValue(7.23));
+        when(mockItemCatalog.getItem("romaine")).thenReturn(mockItem2);
+        when(mockItem2.getPrice(BigDecimal.valueOf(2.21))).thenReturn(getFormattedValue(2.75));
 
         subject.scanItem("almonds", BigDecimal.valueOf(1.17));
         assertThat(subject.getTotal()).isEqualTo(getFormattedValue(7.23));
@@ -52,9 +62,11 @@ public class OrderTest extends CheckoutBaseTest{
 
     @Test
     public void removingScannedItemReducesTotal() {
-        when(mockItemCatalog.getPrice("baked beans", 1)).thenReturn(getFormattedValue(1.50));
-        when(mockItemCatalog.getPrice("baked beans", 2)).thenReturn(getFormattedValue(3));
-        when(mockItemCatalog.getPrice("almonds", BigDecimal.valueOf(1.17))).thenReturn(getFormattedValue(7.23));
+        when(mockItemCatalog.getItem("baked beans")).thenReturn(mockItem1);
+        when(mockItem1.getPrice(1)).thenReturn(getFormattedValue(1.50));
+        when(mockItem1.getPrice(2)).thenReturn(getFormattedValue(3));
+        when(mockItemCatalog.getItem("almonds")).thenReturn(mockItem2);
+        when(mockItem2.getPrice(BigDecimal.valueOf(1.17))).thenReturn(getFormattedValue(7.23));
 
         subject.scanItem("baked beans");
         assertThat(subject.getTotal()).isEqualTo(getFormattedValue(1.50));

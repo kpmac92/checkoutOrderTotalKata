@@ -11,61 +11,65 @@ public class Order {
 
     private BigDecimal total = BigDecimal.valueOf(0.0);
 
-    private Map<String, Integer> itemCountMap = new HashMap<>();
+    private Map<Item, Integer> itemCountMap = new HashMap<>();
 
-    private Map<String, BigDecimal> itemWeightMap = new HashMap<>();
+    private Map<Item, BigDecimal> itemWeightMap = new HashMap<>();
 
     public Order(ItemCatalog itemCatalog) {
         this.itemCatalog = itemCatalog;
     }
 
     public void scanItem(String itemName) {
-        Integer itemCount = itemCountMap.putIfAbsent(itemName, 1);
+        Item item = itemCatalog.getItem(itemName);
+        Integer itemCount = itemCountMap.putIfAbsent(item, 1);
 
         if(itemCount != null) {
-            itemCountMap.put(itemName, itemCount + 1);
+            itemCountMap.put(item, itemCount + 1);
         }
     }
 
     public void scanItem(String itemName, BigDecimal itemWeight) {
-        BigDecimal totalItemWeight = itemWeightMap.putIfAbsent(itemName, itemWeight);
+        Item item = itemCatalog.getItem(itemName);
+        BigDecimal totalItemWeight = itemWeightMap.putIfAbsent(item, itemWeight);
 
         if(totalItemWeight != null) {
-            itemWeightMap.put(itemName, totalItemWeight.add(itemWeight));
+            itemWeightMap.put(item, totalItemWeight.add(itemWeight));
         }
     }
 
     public void removeItem(String itemName) {
-        Integer itemCount = itemCountMap.get(itemName);
+        Item item = itemCatalog.getItem(itemName);
+        Integer itemCount = itemCountMap.get(item);
 
         if(itemCount != null) {
-            removeCountedItem(itemName, itemCount);
-        } else if(itemWeightMap.containsKey(itemName)){
-            itemWeightMap.remove(itemName);
+            removeCountedItem(item, itemCount);
+        } else if(itemWeightMap.containsKey(item)){
+            itemWeightMap.remove(item);
         } else {
             throw new RuntimeException("Item not found in this order.");
         }
     }
 
-    private void removeCountedItem(String itemName, Integer itemCount) {
+    private void removeCountedItem(Item item, Integer itemCount) {
         itemCount = itemCount - 1;
 
+
         if (itemCount == 0) {
-            itemCountMap.remove(itemName);
+            itemCountMap.remove(item);
         } else {
-            itemCountMap.put(itemName, itemCount);
+            itemCountMap.put(item, itemCount);
         }
     }
 
     public BigDecimal getTotal() {
         BigDecimal total = BigDecimal.valueOf(0).setScale(2, RoundingMode.HALF_UP);
 
-        for(Map.Entry<String, Integer> entry : itemCountMap.entrySet()) {
-            total = total.add(itemCatalog.getPrice(entry.getKey(), entry.getValue()));
+        for(Map.Entry<Item, Integer> entry : itemCountMap.entrySet()) {
+            total = total.add(entry.getKey().getPrice(entry.getValue()));
         }
 
-        for(Map.Entry<String, BigDecimal> entry : itemWeightMap.entrySet()) {
-            total = total.add(itemCatalog.getPrice(entry.getKey(), entry.getValue()));
+        for(Map.Entry<Item, BigDecimal> entry : itemWeightMap.entrySet()) {
+            total = total.add(entry.getKey().getPrice(entry.getValue()));
         }
 
         return total;

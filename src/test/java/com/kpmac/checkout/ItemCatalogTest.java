@@ -20,28 +20,30 @@ public class ItemCatalogTest extends CheckoutBaseTest{
     @Test
     public void setPriceSetsThePriceForAnItemAndAddsItemToMapIfItDoesNotExist() {
         subject.setPrice("baked beans", getFormattedValue(1.50), false);
+        Item bakedBeans = subject.getItem("baked beans");
 
-        assertThat(subject.getPrice("baked beans", 1)).isEqualTo(getFormattedValue(1.50));
-        assertThat(subject.getPrice("baked beans", 2)).isEqualTo(getFormattedValue(3.00));
+        assertThat(bakedBeans.getPrice(1)).isEqualTo(getFormattedValue(1.50));
+        assertThat(bakedBeans.getPrice(2)).isEqualTo(getFormattedValue(3.00));
     }
 
     @Test
-    public void getPriceThrowsRuntimeExceptionIfNoPriceIsSet() {
+    public void getItemThrowsRuntimeExceptionIfNoPriceIsSet() {
         try {
-            subject.getPrice("baked beans", 1);
+            subject.getItem("baked beans");
         } catch (RuntimeException e) {
             assertThat(e.getMessage()).isEqualTo("Item not found: baked beans");
             return;
         }
-        fail("Expected getPrice to throw runtime exception.");
+        fail("Expected getItem to throw runtime exception.");
     }
 
     @Test
     public void getPriceWithoutWeightThrowsExceptionIfItemIsPricedByWeight() {
         subject.setPrice("almonds", getFormattedValue(6.99), true);
+        Item almonds = subject.getItem("almonds");
 
         try {
-            subject.getPrice("almonds", 1);
+            almonds.getPrice(1);
         } catch (RuntimeException e) {
             assertThat(e.getMessage()).isEqualTo("almonds must be weighed to get price.");
             return;
@@ -52,9 +54,10 @@ public class ItemCatalogTest extends CheckoutBaseTest{
     @Test
     public void getPriceWithWeightThrowsExceptionIfItemIsNotPricedByWeight() {
         subject.setPrice("baked beans", getFormattedValue(1.50), false);
+        Item bakedBeans = subject.getItem("baked beans");
 
         try {
-            subject.getPrice("baked beans", getFormattedValue(2.63));
+            bakedBeans.getPrice(getFormattedValue(2.63));
         } catch (RuntimeException e) {
             assertThat(e.getMessage()).isEqualTo("baked beans is not priced by weight.");
             return;
@@ -65,11 +68,12 @@ public class ItemCatalogTest extends CheckoutBaseTest{
     @Test
     public void getPriceWithWeightReturnsPerUnitPriceMultipliedByWeightRoundedToNearestCent(){
         subject.setPrice("almonds", getFormattedValue(6.99), true);
+        Item almonds = subject.getItem("almonds");
 
-        assertThat(subject.getPrice("almonds", BigDecimal.valueOf(1.18329)))
+        assertThat(almonds.getPrice(BigDecimal.valueOf(1.18329)))
                 .isEqualTo(getFormattedValue(8.27));
 
-        assertThat(subject.getPrice("almonds", BigDecimal.valueOf(4.18329)))
+        assertThat(almonds.getPrice(BigDecimal.valueOf(4.18329)))
                 .isEqualTo(getFormattedValue(29.24));
     }
 
@@ -77,37 +81,39 @@ public class ItemCatalogTest extends CheckoutBaseTest{
     public void getPriceSubtractsMarkdownPriceWhenMarkdownIsSet() {
         subject.setPrice("baked beans", getFormattedValue(1.50), false);
         subject.setMarkdown("baked beans", getFormattedValue(.50));
+        Item bakedBeans = subject.getItem("baked beans");
 
-        assertThat(subject.getPrice("baked beans", 1))
+        assertThat(bakedBeans.getPrice(1))
                 .isEqualTo(getFormattedValue(1.00));
 
         subject.setPrice("almonds", getFormattedValue(6.99), true);
         subject.setMarkdown("almonds", getFormattedValue(.99));
+        Item almonds = subject.getItem("almonds");
 
-        assertThat(subject.getPrice("almonds", getFormattedValue(1.17)))
+        assertThat(almonds.getPrice(getFormattedValue(1.17)))
                 .isEqualTo(getFormattedValue(7.02));
     }
 
     @Test
     public void getPriceReturnsCorrectPriceWhenABogoSpecialIsAdded() {
         subject.setPrice("baked beans", getFormattedValue(1.50), false);
-        subject.addBogoSpecial("baked beans", 1, getFormattedValue(0));
 
-        assertThat(subject.getPrice("baked beans", 4)).isEqualTo(getFormattedValue(3.00));
+        subject.addBogoSpecial("baked beans", 1, getFormattedValue(0));
+        Item bakedBeans = subject.getItem("baked beans");
+        assertThat(bakedBeans.getPrice(4)).isEqualTo(getFormattedValue(3.00));
 
         subject.addBogoSpecial("baked beans", 3, getFormattedValue(0));
-
-        assertThat(subject.getPrice("baked beans", 4)).isEqualTo(getFormattedValue(4.50));
-
-        assertThat(subject.getPrice("baked beans", 5)).isEqualTo(getFormattedValue(6));
+        bakedBeans = subject.getItem("baked beans");
+        assertThat(bakedBeans.getPrice(4)).isEqualTo(getFormattedValue(4.50));
+        assertThat(bakedBeans.getPrice(5)).isEqualTo(getFormattedValue(6));
 
         subject.addBogoSpecial("baked beans", 3, getFormattedValue(.50));
-
-        assertThat(subject.getPrice("baked beans", 8)).isEqualTo(getFormattedValue(10.5));
+        bakedBeans = subject.getItem("baked beans");
+        assertThat(bakedBeans.getPrice(8)).isEqualTo(getFormattedValue(10.5));
 
         subject.setMarkdown("baked beans", getFormattedValue(.50));
-
-        assertThat(subject.getPrice("baked beans", 5)).isEqualTo(getFormattedValue(4.50));
+        bakedBeans = subject.getItem("baked beans");
+        assertThat(bakedBeans.getPrice(5)).isEqualTo(getFormattedValue(4.50));
     }
 
     @Test
@@ -115,56 +121,56 @@ public class ItemCatalogTest extends CheckoutBaseTest{
         subject.setPrice("baked beans", getFormattedValue(1.50), false);
 
         subject.addBulkSpecial("baked beans", 5, getFormattedValue(1));
-
-        assertThat(subject.getPrice("baked beans", 5)).isEqualTo(getFormattedValue(5));
-
-        assertThat(subject.getPrice("baked beans", 6)).isEqualTo(getFormattedValue(6.50));
-
-        assertThat(subject.getPrice("baked beans", 10)).isEqualTo(getFormattedValue(10));
-        
-        assertThat(subject.getPrice("baked beans", 17)).isEqualTo(getFormattedValue(18));
+        Item bakedBeans = subject.getItem("baked beans");
+        assertThat(bakedBeans.getPrice(5)).isEqualTo(getFormattedValue(5));
+        assertThat(bakedBeans.getPrice(6)).isEqualTo(getFormattedValue(6.50));
+        assertThat(bakedBeans.getPrice(10)).isEqualTo(getFormattedValue(10));
+        assertThat(bakedBeans.getPrice(17)).isEqualTo(getFormattedValue(18));
         
         subject.setMarkdown("baked beans", getFormattedValue(.25));
-
-        assertThat(subject.getPrice("baked beans", 6)).isEqualTo(getFormattedValue(6.25));
+        bakedBeans = subject.getItem("baked beans");
+        assertThat(bakedBeans.getPrice(6)).isEqualTo(getFormattedValue(6.25));
     }
 
     @Test
     public void getPriceReturnsCorrectPriceWithBogoSpecialAndLimit() {
-        subject.setPrice("baked beans", BigDecimal.valueOf(1.50), false);
+        subject.setPrice("baked beans", getFormattedValue(1.50), false);
 
         subject.addBogoSpecial("baked beans", 5, getFormattedValue(0), 12);
-
-        assertThat(subject.getPrice("baked beans", 18)).isEqualTo(getFormattedValue(24));
+        Item bakedBeans = subject.getItem("baked beans");
+        assertThat(bakedBeans.getPrice(18)).isEqualTo(getFormattedValue(24));
 
         subject.addBogoSpecial("baked beans", 2, getFormattedValue(.50), 6);
-
-        assertThat(subject.getPrice("baked beans", 9)).isEqualTo(getFormattedValue(12));
+        bakedBeans = subject.getItem("baked beans");
+        assertThat(bakedBeans.getPrice(9)).isEqualTo(getFormattedValue(12));
 
         subject.addBogoSpecial("baked beans", 1, getFormattedValue(0), 6);
-
-        assertThat(subject.getPrice("baked beans", 8)).isEqualTo(getFormattedValue(7.5));
+        bakedBeans = subject.getItem("baked beans");
+        assertThat(bakedBeans.getPrice(8)).isEqualTo(getFormattedValue(7.5));
 
         subject.addBogoSpecial("baked beans", 1, getFormattedValue(0), 7);
-
-        assertThat(subject.getPrice("baked beans", 8)).isEqualTo(getFormattedValue(7.5));
+        bakedBeans = subject.getItem("baked beans");
+        assertThat(bakedBeans.getPrice(8)).isEqualTo(getFormattedValue(7.5));
     }
 
     @Test
     public void getPriceReturnsCorrectPriceWithBulkSpecialAndLimit() {
-        subject.setPrice("baked beans", BigDecimal.valueOf(1.50), false);
+        subject.setPrice("baked beans", getFormattedValue(1.50), false);
 
         subject.addBulkSpecial("baked beans", 5, getFormattedValue(1), 10);
 
-        assertThat(subject.getPrice("baked beans", 15)).isEqualTo(getFormattedValue(17.5));
-        assertThat(subject.getPrice("baked beans", 8)).isEqualTo(getFormattedValue(9.5));
-        assertThat(subject.getPrice("baked beans", 13)).isEqualTo(getFormattedValue(14.5));
+        Item bakedBeans = subject.getItem("baked beans");
+
+        assertThat(bakedBeans.getPrice(15)).isEqualTo(getFormattedValue(17.5));
+        assertThat(bakedBeans.getPrice(8)).isEqualTo(getFormattedValue(9.5));
+        assertThat(bakedBeans.getPrice(13)).isEqualTo(getFormattedValue(14.5));
 
         subject.addBulkSpecial("baked beans", 3, getFormattedValue(1), 8);
+        bakedBeans = subject.getItem("baked beans");
 
-        assertThat(subject.getPrice("baked beans", 6)).isEqualTo(getFormattedValue(6));
-        assertThat(subject.getPrice("baked beans", 7)).isEqualTo(getFormattedValue(7.5));
-        assertThat(subject.getPrice("baked beans", 9)).isEqualTo(getFormattedValue(10.5));
-        assertThat(subject.getPrice("baked beans", 10)).isEqualTo(getFormattedValue(12));
+        assertThat(bakedBeans.getPrice(6)).isEqualTo(getFormattedValue(6));
+        assertThat(bakedBeans.getPrice(7)).isEqualTo(getFormattedValue(7.5));
+        assertThat(bakedBeans.getPrice(9)).isEqualTo(getFormattedValue(10.5));
+        assertThat(bakedBeans.getPrice(10)).isEqualTo(getFormattedValue(12));
     }
 }
