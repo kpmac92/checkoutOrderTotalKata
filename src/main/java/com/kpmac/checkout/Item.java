@@ -1,5 +1,6 @@
 package com.kpmac.checkout;
 
+import com.kpmac.checkout.special.DependentPriceSpecial;
 import com.kpmac.checkout.special.PriceSpecial;
 
 import java.math.BigDecimal;
@@ -13,6 +14,7 @@ public class Item {
     private BigDecimal markDown;
     private PriceSpecial priceSpecial;
     private static final RoundingMode ROUNDING_MODE = RoundingMode.HALF_UP;
+    private DependentPriceSpecial dependentPriceSpecial;
 
     public Item(String name, BigDecimal price, Boolean pricedByWeight) {
         this.name = name;
@@ -42,6 +44,10 @@ public class Item {
         return price.setScale(2, ROUNDING_MODE);
     }
 
+    public BigDecimal getPrice(BigDecimal weight, BigDecimal primaryItemPrice) {
+        return null;
+    }
+
     private BigDecimal calculatePriceWithoutSpecial(int itemCount) {
         return getPrice().multiply(BigDecimal.valueOf(itemCount));
     }
@@ -68,5 +74,9 @@ public class Item {
 
     public Boolean isPricedByWeight() {
         return pricedByWeight;
+    }
+
+    public DependentPriceSpecial getDependentPriceSpecial() {
+        return dependentPriceSpecial;
     }
 }

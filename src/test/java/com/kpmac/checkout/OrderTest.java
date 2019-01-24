@@ -1,5 +1,6 @@
 package com.kpmac.checkout;
 
+import com.kpmac.checkout.special.DependentPriceSpecial;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -88,5 +89,20 @@ public class OrderTest extends CheckoutBaseTest{
 
         subject.scanItem("baked beans");
         assertThat(subject.getTotal()).isEqualTo(getFormattedValue(1.50));
+    }
+
+    @Test
+    public void getTotalCallsGetPriceWithItemWhenDependentPriceSpecialExists() {
+        DependentPriceSpecial special = new DependentPriceSpecial(mockItem2, mockItem1, BigDecimal.valueOf(.50));
+        when(mockItemCatalog.getItem("almonds")).thenReturn(mockItem1);
+        when(mockItem1.getDependentPriceSpecial()).thenReturn(null);
+        when(mockItemCatalog.getItem("peanuts")).thenReturn(mockItem2);
+        when(mockItem2.getDependentPriceSpecial()).thenReturn(special);
+        when(mockItem1.getPrice(BigDecimal.valueOf(1.17))).thenReturn(getFormattedValue(8.19));
+        when(mockItem2.getPrice(BigDecimal.valueOf(1.37), getFormattedValue(8.19))).thenReturn(getFormattedValue(3.43));
+
+        subject.scanItem("almonds", BigDecimal.valueOf(1.17));
+        subject.scanItem("peanuts", BigDecimal.valueOf(1.37));
+        assertThat(subject.getTotal()).isEqualTo(getFormattedValue(11.62));
     }
 }

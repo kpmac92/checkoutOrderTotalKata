@@ -69,9 +69,26 @@ public class Order {
         }
 
         for(Map.Entry<Item, BigDecimal> entry : itemWeightMap.entrySet()) {
-            total = total.add(entry.getKey().getPrice(entry.getValue()));
+            if(entry.getKey().getDependentPriceSpecial() != null) {
+                total = total.add(handleDependentPriceSpecial(entry, itemWeightMap));
+            } else {
+                total = total.add(entry.getKey().getPrice(entry.getValue()));
+            }
         }
 
         return total;
+    }
+
+    private BigDecimal handleDependentPriceSpecial(Map.Entry<Item, BigDecimal> itemWeightMapEntry
+            , Map<Item, BigDecimal> itemWeightMap) {
+        Item primaryItem = itemWeightMapEntry.getKey().getDependentPriceSpecial().getPrimaryItem();
+        BigDecimal primaryItemWeight = itemWeightMap.get(primaryItem);
+
+        if(primaryItemWeight == null) {
+            return itemWeightMapEntry.getKey().getPrice(itemWeightMapEntry.getValue());
+        } else {
+            BigDecimal primaryItemPrice = primaryItem.getPrice(primaryItemWeight);
+            return itemWeightMapEntry.getKey().getPrice(itemWeightMapEntry.getValue(), primaryItemPrice);
+        }
     }
 }
