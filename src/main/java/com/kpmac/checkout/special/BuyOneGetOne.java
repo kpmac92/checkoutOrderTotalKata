@@ -36,11 +36,6 @@ public class BuyOneGetOne implements PriceSpecial{
         return basePriceTotal.add(specialPriceTotal);
     }
 
-    @Override
-    public BigDecimal getPrice(BigDecimal weight) {
-        throw new UnsupportedOperationException("Buy One Get One special not valid for weighed items.");
-    }
-
     private BigDecimal getSpecialPrice() {
         return item.getPrice().multiply(priceModifier).setScale(2, RoundingMode.HALF_UP);
     }

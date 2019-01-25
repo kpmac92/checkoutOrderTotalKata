@@ -38,10 +38,7 @@ public class Item {
             throw new RuntimeException(name + " is not priced by weight.");
         }
 
-        BigDecimal price = priceSpecial == null ? calculatePriceWithoutSpecial(weight)
-                : priceSpecial.getPrice(weight);
-
-        return price.setScale(2, ROUNDING_MODE);
+        return calculatePriceWithoutSpecial(weight).setScale(2, ROUNDING_MODE);
     }
 
     public BigDecimal getPrice(BigDecimal weight, BigDecimal primaryItemPrice) {
@@ -74,10 +71,6 @@ public class Item {
 
     public void setPriceSpecial(PriceSpecial priceSpecial) {
         this.priceSpecial = priceSpecial;
-    }
-
-    public Boolean isPricedByWeight() {
-        return pricedByWeight;
     }
 
     public DependentPriceSpecial getDependentPriceSpecial() {

@@ -9,8 +9,6 @@ public class Order {
 
     private final ItemCatalog itemCatalog;
 
-    private BigDecimal total = BigDecimal.valueOf(0.0);
-
     private Map<Item, Integer> itemCountMap = new HashMap<>();
 
     private Map<Item, BigDecimal> itemWeightMap = new HashMap<>();

@@ -10,6 +10,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.math.BigDecimal;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -104,5 +106,16 @@ public class OrderTest extends CheckoutBaseTest{
         subject.scanItem("almonds", BigDecimal.valueOf(1.17));
         subject.scanItem("peanuts", BigDecimal.valueOf(1.37));
         assertThat(subject.getTotal()).isEqualTo(getFormattedValue(11.62));
+    }
+
+    @Test
+    public void removeItemThrowsExceptionWhenItemDoesNotExistInOrder() {
+        try{
+            subject.removeItem("baked beans");
+        } catch (RuntimeException e) {
+            assertThat(e.getMessage()).isEqualTo("Item not found in this order.");
+            return;
+        }
+        fail("Runtime Exception expected.");
     }
 }

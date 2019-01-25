@@ -1,5 +1,6 @@
 plugins {
     id 'java-library'
+    id 'jacoco'
 }
 
 repositories {
@@ -10,4 +11,8 @@ dependencies {
     testCompile 'junit:junit:4.12'
     testCompile 'org.assertj:assertj-core:1.0.0'
     testCompile 'org.mockito:mockito-all:1.9.5'
+}
+
+test {
+    finalizedBy jacocoTestReport
 }

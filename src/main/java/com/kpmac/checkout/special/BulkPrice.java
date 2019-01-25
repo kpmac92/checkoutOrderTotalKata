@@ -36,9 +36,4 @@ public class BulkPrice implements PriceSpecial{
 
         return specialPriceTotal.add(basePriceTotal);
     }
-
-    @Override
-    public BigDecimal getPrice(BigDecimal weight) {
-        throw new UnsupportedOperationException("Bulk price special not valid for weighed items.");
-    }
 }
