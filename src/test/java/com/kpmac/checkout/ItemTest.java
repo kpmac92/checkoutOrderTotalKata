@@ -2,6 +2,7 @@ package com.kpmac.checkout;
 
 import com.kpmac.checkout.special.BulkPrice;
 import com.kpmac.checkout.special.BuyOneGetOne;
+import com.kpmac.checkout.special.DependentPriceSpecial;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -129,5 +130,30 @@ public class ItemTest extends CheckoutBaseTest{
         assertThat(subject.getPrice(7)).isEqualTo(getFormattedValue(7.5));
         assertThat(subject.getPrice(9)).isEqualTo(getFormattedValue(10.5));
         assertThat(subject.getPrice(10)).isEqualTo(getFormattedValue(12));
+    }
+
+    @Test
+    public void getPriceReturnsCorrectPriceWithDependentPriceSpecial() {
+        Item subject = new Item("peanuts", getFormattedValue(5), true);
+        Item primaryItem = new Item("almonds", getFormattedValue(7), true);
+
+        subject.setDependentPriceSpecial(new DependentPriceSpecial(subject, primaryItem, getFormattedValue(.50)));
+
+        assertThat(subject.getPrice(BigDecimal.valueOf(1.35), getFormattedValue(8.27))).isEqualTo(getFormattedValue(3.38));
+        assertThat(subject.getPrice(BigDecimal.valueOf(3.19), getFormattedValue(8.27))).isEqualTo(getFormattedValue(11.82));
+    }
+
+    @Test
+    public void getPriceWithPrimaryItemPriceThrowsExceptionWhenNoDependentPriceSpecialExists() {
+        Item subject = new Item("peanuts", getFormattedValue(5), true);
+
+        try{
+            subject.getPrice(BigDecimal.valueOf(3.19), getFormattedValue(8.27));
+        } catch (RuntimeException e) {
+            assertThat(e.getMessage()).isEqualTo("No Item Dependent Price Special exists for this item.");
+            return;
+        }
+
+        fail("Expected runtime exception");
     }
 }

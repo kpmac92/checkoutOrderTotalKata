@@ -45,7 +45,11 @@ public class Item {
     }
 
     public BigDecimal getPrice(BigDecimal weight, BigDecimal primaryItemPrice) {
-        return null;
+        if (dependentPriceSpecial == null) {
+            throw new RuntimeException("No Item Dependent Price Special exists for this item.");
+        }
+
+        return dependentPriceSpecial.getPrice(weight, primaryItemPrice).setScale(2, ROUNDING_MODE);
     }
 
     private BigDecimal calculatePriceWithoutSpecial(int itemCount) {
@@ -78,5 +82,9 @@ public class Item {
 
     public DependentPriceSpecial getDependentPriceSpecial() {
         return dependentPriceSpecial;
+    }
+
+    public void setDependentPriceSpecial(DependentPriceSpecial dependentPriceSpecial) {
+        this.dependentPriceSpecial = dependentPriceSpecial;
     }
 }
