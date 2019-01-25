@@ -70,6 +70,22 @@ public class CheckoutIntegrationTest extends CheckoutBaseTest {
         assertThat(order.getTotal()).isEqualTo(getFormattedValue(17.4));
     }
 
+    @Test
+    public void getTotalCorrectlyCalculatesTotalWithDependentPriceSpecial() {
+        itemCatalog.setPrice("peanuts", getFormattedValue(5), true);
+        itemCatalog.addDependentPriceSpecial("peanuts", "almonds", getFormattedValue(.50));
+
+        order.scanItem("peanuts", BigDecimal.valueOf(3.19));
+        assertThat(order.getTotal()).isEqualTo(getFormattedValue(15.95));
+
+        order.scanItem("almonds", BigDecimal.valueOf(1.183));
+        assertThat(order.getTotal()).isEqualTo(getFormattedValue(20.09));
+
+        order.removeItem("almonds");
+        assertThat(order.getTotal()).isEqualTo(getFormattedValue(15.95));
+
+    }
+
     private void scanItem(String itemName, int count) {
         for(int i = 0; i < count; i++) {
             order.scanItem(itemName);

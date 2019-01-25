@@ -2,6 +2,7 @@ package com.kpmac.checkout;
 
 import com.kpmac.checkout.special.BulkPrice;
 import com.kpmac.checkout.special.BuyOneGetOne;
+import com.kpmac.checkout.special.DependentPriceSpecial;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -52,6 +53,13 @@ public class ItemCatalog {
         Item item = getItemFromMap(itemName);
 
         item.setPriceSpecial(new BulkPrice(item, specialQuantity, specialPrice, limit));
+    }
+
+    public void addDependentPriceSpecial(String dependentItemName, String primaryItemName, BigDecimal priceModifier) {
+        Item dependentItem = getItemFromMap(dependentItemName);
+        Item primaryItem = getItemFromMap(primaryItemName);
+
+        dependentItem.setDependentPriceSpecial(new DependentPriceSpecial(dependentItem, primaryItem, priceModifier));
     }
 
     private Item getItemFromMap(String itemName) {
