@@ -86,6 +86,22 @@ public class CheckoutIntegrationTest extends CheckoutBaseTest {
 
     }
 
+    @Test
+    public void getTotalCorrectlyCalculatesTotalWithUnlimitedBogoSpecial() {
+        itemCatalog.addBogoSpecial("baked beans", 3, getFormattedValue(0));
+
+        scanItem("baked beans", 16);
+        assertThat(order.getTotal()).isEqualTo(getFormattedValue(18));
+    }
+
+    @Test
+    public void getTotalCorrectlyCalculatesTotalWithUnlimitedBulkSpecial() {
+        itemCatalog.addBulkSpecial("yogurt", 5, getFormattedValue(.50));
+
+        scanItem("yogurt", 23);
+        assertThat(order.getTotal()).isEqualTo(getFormattedValue(13));
+    }
+
     private void scanItem(String itemName, int count) {
         for(int i = 0; i < count; i++) {
             order.scanItem(itemName);
